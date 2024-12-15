@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>示例网站</title>
+    <style>
+        /* 模态框样式 */
+       .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+       .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+        }
+
+       .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+       .close:hover,
+       .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>用户信息列表</h1>
+    <form method="post">
+        <input type="text" name="name" placeholder="请输入姓名">
+        <input type="submit" value="添加用户">
+    </form>
+    <ul>
+        {% for user in users %}
+        <li>ID: {{ user[0] }}, 姓名: {{ user[1] }}</li>
+        {% endfor %}
+    </ul>
+    <button onclick="openModal()">查询用户</button>
+
+    <!-- 模态框 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="searchForm">
+                <input type="text" id="search_name" placeholder="请输入要查询的姓名">
+                <input type="submit" value="查询">
+            </form>
+            <ul id="searchResults"></ul>
+        </div>
+    </div>
+
+    <script>
+        // 打开模态框
+        function openModal() {
+            document.getElementById('myModal').style.display = "block";
+        }
+
+        // 关闭模态框
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function () {
+            document.getElementById('myModal').style.display = "none";
+        }
+
+        // 点击模态框外关闭模态框
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('myModal')) {
+                document.getElementById('myModal').style.display = "none";
+            }
+        }
+
+        // 提交查询表单
+        const searchForm = document.getElementById('searchForm');
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const search_name = document.getElementById('search_name').value;
+            fetch('/search_user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `search_name=${search_name}`
+            })
+           .then(response => response.json())
+           .then(data => {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '';
+                data.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${user[0]}, 姓名: ${user[1]}`;
+                    searchResults.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

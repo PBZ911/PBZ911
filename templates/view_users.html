@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>查看所有用户</title>
+</head>
+
+<body>
+    <h1>所有用户信息</h1>
+    <ul>
+        {% for user in users %}
+        <li>ID: {{ user[0] }}, 姓名: {{ user[1] }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
